@@ -1,0 +1,65 @@
+package com.emsi.sav.servicetickets.controllers;
+
+import com.emsi.sav.servicetickets.entities.Ticket;
+import com.emsi.sav.servicetickets.repositories.TicketRepository;
+import com.emsi.sav.servicetickets.services.TicketService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/tickets")
+public class TicketController {
+
+    private final TicketService ticketService;
+    private final TicketRepository ticketRepository;
+
+    public TicketController(TicketService ticketService, TicketRepository ticketRepository) {
+        this.ticketService = ticketService;
+        this.ticketRepository = ticketRepository;
+    }
+
+    @PostMapping
+    public ResponseEntity<Ticket> creerTicket(@RequestBody Ticket ticket){
+        Ticket ticketCree = ticketService.creerTicket(ticket);
+        return ResponseEntity.ok(ticketCree);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Ticket>> listeTousTicket(){
+        return ResponseEntity.ok(ticketService.tousLesTickets());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Ticket> getTicketById(@PathVariable("id") UUID id){
+        return ResponseEntity.ok(ticketService.afficheTicket(id));
+    }
+
+    @GetMapping("status/{status}")
+    public ResponseEntity<List<Ticket>> getAllTicketByStatus(@PathVariable("status") String status){
+        return ResponseEntity.ok(ticketService.getAllByStatus(status));
+    }
+
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<List<Ticket>> ticketParClient(@PathVariable("customerId") UUID customerId){
+        return ResponseEntity.ok(ticketRepository.findByCustomerId(customerId));
+    }
+
+    @GetMapping("/agent/agentId")
+    public ResponseEntity<List<Ticket>> ticketParAgent(@PathVariable("agentId") UUID agentId){
+        return ResponseEntity.ok(ticketRepository.findByAgentId(agentId));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Ticket> mettreAjourTicket(@PathVariable("id") UUID id, @RequestBody Ticket ticket){
+        return ResponseEntity.ok(ticketService.mettreAJourTicket(id, ticket));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> supprimerTicket(@PathVariable("id") UUID id){
+        ticketService.supprimerTicket(id);
+        return ResponseEntity.noContent().build();
+    }
+}
