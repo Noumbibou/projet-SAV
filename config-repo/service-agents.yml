@@ -7,3 +7,18 @@ spring:
     username: sav_user
     password: sav_password
     driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+  kafka:
+    consumer:
+      properties:
+        spring.json.type.mapping: ticketCreated:com.emsi.sav.serviceagents.events.TicketCreatedEvent
+    producer:
+      properties:
+        spring.json.type.mapping: agentAssigned:com.emsi.sav.serviceagents.events.AgentAssignedEvent

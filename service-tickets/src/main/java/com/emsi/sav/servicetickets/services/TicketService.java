@@ -41,6 +41,7 @@ public class TicketService {
                 ticketSauvegarde.getTitle(),
                 ticketSauvegarde.getChannel(),
                 ticketSauvegarde.getPriority().getLabel(),
+                ticketSauvegarde.getCategory().getName(),
                 ticketSauvegarde.getCustomerId(),
                 ticketSauvegarde.getCreatedAt()
         );

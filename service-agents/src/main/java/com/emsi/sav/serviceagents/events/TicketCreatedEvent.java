@@ -1,4 +1,4 @@
-package com.emsi.sav.servicetickets.events;
+package com.emsi.sav.serviceagents.events;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -10,8 +10,6 @@ public record TicketCreatedEvent(
         String priorityLabel,
         String categoryName,
         UUID customerId,
-        LocalDateTime createAt
-
-){}
-
-
+        LocalDateTime createdAt
+) {
+}

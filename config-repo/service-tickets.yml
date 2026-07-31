@@ -15,3 +15,7 @@ spring:
       hibernate:
         format_sql: true
     open-in-view:  false
+  kafka:
+    producer:
+      properties:
+        spring.json.type.mapping: ticketCreated:com.emsi.sav.servicetickets.events.TicketCreatedEvent
