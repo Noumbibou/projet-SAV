@@ -1,5 +1,6 @@
 package com.emsi.sav.serviceagents.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,6 +25,7 @@ public class Skill {
 
     @ManyToOne
     @JoinColumn(name = "agent_id")
+    @JsonBackReference
     private Agent agent;
 
 

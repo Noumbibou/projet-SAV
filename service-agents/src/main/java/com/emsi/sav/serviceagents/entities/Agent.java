@@ -1,5 +1,6 @@
 package com.emsi.sav.serviceagents.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,5 +27,6 @@ public class Agent {
     private String email;
 
     @OneToMany(mappedBy = "agent", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<Skill> skills;
 }

@@ -1,5 +1,6 @@
 package com.emsi.sav.serviceclients.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,5 +29,6 @@ public class Customer {
     private String phone;
 
     @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<Contact> contacts;
 }
