@@ -16,6 +16,9 @@ spring:
         format_sql: true
     open-in-view:  false
   kafka:
+    consumer:
+      properties:
+        spring.json.type.mapping: agentAssigned:com.emsi.sav.servicetickets.events.AgentAssignedEvent
     producer:
       properties:
-        spring.json.type.mapping: ticketCreated:com.emsi.sav.servicetickets.events.TicketCreatedEvent
+        spring.json.type.mapping: ticketCreated:com.emsi.sav.servicetickets.events.TicketCreatedEvent,ticketResolved:com.emsi.sav.servicetickets.events.TicketResolvedEvent

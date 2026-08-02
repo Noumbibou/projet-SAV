@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -61,5 +62,10 @@ public class TicketController {
     public ResponseEntity<Void> supprimerTicket(@PathVariable("id") UUID id){
         ticketService.supprimerTicket(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/resoudre")
+    public ResponseEntity<Ticket> resoudreTicket(@PathVariable("id") UUID id, @RequestBody Map<String, String> body) {
+        return ResponseEntity.ok(ticketService.resoudreTicket(id, body.get("description")));
     }
 }

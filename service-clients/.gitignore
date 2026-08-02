@@ -37,3 +37,4 @@ build/
 
 # Logs
 *.log
+config-repo/service-clients.yml

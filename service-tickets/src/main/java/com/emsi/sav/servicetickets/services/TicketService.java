@@ -1,8 +1,12 @@
 package com.emsi.sav.servicetickets.services;
 
+import com.emsi.sav.servicetickets.entities.Resolution;
 import com.emsi.sav.servicetickets.entities.Ticket;
+import com.emsi.sav.servicetickets.events.AgentAssignedEvent;
 import com.emsi.sav.servicetickets.events.TicketCreatedEvent;
+import com.emsi.sav.servicetickets.events.TicketResolvedEvent;
 import com.emsi.sav.servicetickets.kafka.TicketEventProducer;
+import com.emsi.sav.servicetickets.repositories.ResolutionRepository;
 import com.emsi.sav.servicetickets.repositories.TicketRepository;
 import com.emsi.sav.servicetickets.strategies.CategoryStrategy;
 import com.emsi.sav.servicetickets.strategies.PriorityStrategy;
@@ -21,12 +25,14 @@ public class TicketService {
     private final PriorityStrategy priorityStrategy;
     private final TicketEventProducer ticketEventProducer;
     private final CategoryStrategy categoryStrategy;
+    private final ResolutionRepository resolutionRepository;
 
-    public TicketService(TicketRepository ticketRepository, PriorityStrategy priorityStrategy, TicketEventProducer ticketEventProducer, CategoryStrategy categoryStrategy) {
+    public TicketService(TicketRepository ticketRepository, PriorityStrategy priorityStrategy, TicketEventProducer ticketEventProducer, CategoryStrategy categoryStrategy, ResolutionRepository resolutionRepository) {
         this.ticketRepository = ticketRepository;
         this.priorityStrategy = priorityStrategy;
         this.ticketEventProducer = ticketEventProducer;
         this.categoryStrategy = categoryStrategy;
+        this.resolutionRepository = resolutionRepository;
     }
 
     public Ticket creerTicket(Ticket ticket) {
@@ -81,5 +87,38 @@ public class TicketService {
         ticketRepository.deleteById(id);
     }
 
+    public Ticket resoudreTicket(UUID id, String descriptionResolution) {
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Ticket introuvable: " + id));
 
+        Resolution resolution = new Resolution(null, descriptionResolution, LocalDateTime.now());
+        resolutionRepository.save(resolution);
+
+        ticket.setResolution(resolution);
+        ticket.setStatus("RESOLU");
+        ticket.setResolvedAt(LocalDateTime.now());
+
+        Ticket ticketResolu = ticketRepository.save(ticket);
+
+        TicketResolvedEvent event = new TicketResolvedEvent(
+                ticketResolu.getId(),
+                ticketResolu.getCustomerId(),
+                descriptionResolution,
+                ticketResolu.getResolvedAt()
+        );
+        ticketEventProducer.publierTicketResolu(event);
+
+        return ticketResolu;
+    }
+
+    public void marquerAgentAssigne(AgentAssignedEvent event) {
+        ticketRepository.findById(event.ticketId()).ifPresentOrElse(
+                ticket -> {
+                    ticket.setAgentId(event.agentId());
+                    ticket.setStatus("EN_COURS");
+                    ticketRepository.save(ticket);
+                },
+                () -> System.err.println("Ticket introuvable pour l'evenement agent-assigned, ticketId=" + event.ticketId())
+        );
+    }
 }
