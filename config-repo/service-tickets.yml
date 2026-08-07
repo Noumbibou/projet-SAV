@@ -28,3 +28,8 @@ spring:
     producer:
       properties:
         spring.json.type.mapping: ticketCreated:com.emsi.sav.servicetickets.events.TicketCreatedEvent,ticketResolved:com.emsi.sav.servicetickets.events.TicketResolvedEvent
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
